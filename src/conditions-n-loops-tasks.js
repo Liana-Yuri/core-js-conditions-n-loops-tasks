@@ -395,8 +395,34 @@ function rotateMatrix(matrix) {
  *  [2, 9, 5, 9]    => [2, 5, 9, 9]
  *  [-2, 9, 5, -3]  => [-3, -2, 5, 9]
  */
-function sortByAsc(/* arr */) {
-  throw new Error('Not implemented');
+function sortByAsc(arr) {
+  if (arr.length < 2) {
+    return arr;
+  }
+
+  let low = [];
+  let high = [];
+  let arrCopy = arr;
+  const pivot = arrCopy[0];
+
+  for (let i = 1; i < arrCopy.length; i += 1) {
+    if (arrCopy[i] < pivot) {
+      low[low.length] = arrCopy[i];
+    } else {
+      high[high.length] = arrCopy[i];
+    }
+  }
+
+  low = sortByAsc(low);
+  high = sortByAsc(high);
+  arrCopy = [...low, pivot, ...high];
+
+  const result = arr;
+  for (let i = 0; i < arrCopy.length; i += 1) {
+    result[i] = arrCopy[i];
+  }
+
+  return arr;
 }
 
 /**
@@ -416,8 +442,50 @@ function sortByAsc(/* arr */) {
  *  '012345', 3 => '024135' => '043215' => '031425'
  *  'qwerty', 3 => 'qetwry' => 'qtrewy' => 'qrwtey'
  */
-function shuffleChar(/* str, iterations */) {
-  throw new Error('Not implemented');
+function shuffleChar(str, iterations) {
+  if (!iterations || iterations < 0) {
+    return str;
+  }
+  let count = iterations;
+  let currentStr = str;
+  const memory = new Map();
+  let period = 0;
+  while (count > 0) {
+    if (memory.has(currentStr)) {
+      period = count - memory.get(currentStr);
+      count %= period;
+      break;
+    }
+
+    memory.set(currentStr, count);
+    let start = '';
+    let end = '';
+
+    for (let i = 0; i < currentStr.length; i += 1) {
+      if (i % 2 === 0) {
+        start += currentStr[i];
+      } else {
+        end += currentStr[i];
+      }
+    }
+    currentStr = start + end;
+    count -= 1;
+  }
+  for (let i = 0; i < count; i += 1) {
+    let start = '';
+    let end = '';
+    for (let j = 0; j < str.length; j += 1) {
+      if (j % 2 === 0) {
+        start += currentStr[j];
+      } else {
+        end += currentStr[j];
+      }
+    }
+
+    currentStr = start + end;
+  }
+
+  return currentStr;
 }
 
 /**
@@ -437,8 +505,32 @@ function shuffleChar(/* str, iterations */) {
  * @param {number} number The source number
  * @returns {number} The nearest larger number, or original number if none exists.
  */
-function getNearestBigger(/* number */) {
-  throw new Error('Not implemented');
+function getNearestBigger(number) {
+  if (number < 10) {
+    return number;
+  }
+  const digits = [...number.toFixed()];
+  const limit = digits.length - 1;
+  let i = limit - 1;
+  while (i >= 0 && digits[i] >= digits[i + 1]) {
+    i -= 1;
+  }
+
+  if (i < 0) {
+    return number;
+  }
+
+  let j = limit;
+  while (j > i && digits[j] <= digits[i]) {
+    j -= 1;
+  }
+
+  [digits[i], digits[j]] = [digits[j], digits[i]];
+
+  const rightPart = digits.splice(i + 1).sort((a, b) => a - b);
+  digits.push(...rightPart);
+
+  return +digits.join('');
 }
 
 module.exports = {
